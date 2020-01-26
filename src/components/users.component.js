@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import $ from "min-jquery";
 //import {Link} from 'react-router-dom';
 
 const UsersList = props => (
@@ -16,26 +17,25 @@ export default class Users extends Component{
 
 		this.onChangeName = this.onChangeName.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.showData = this.showData.bind(this);
 
 		this.state = {
 			name: '',
-			allUsers: []
+			items: [],
+			counter: 1
 		}
 
 	}
 
-	componentDidMount(){
-		axios.get('http://localhost:5000/users/')
-			.then(response => {
-				if(response.data.length > 0){
-					this.setState({
-		
-						allUsers: response.data.reverse()
-					}); 
-					console.log(this.state.allUsers);				
-				}
-				
+	componentDidMount(){	
+		fetch('http://localhost:5000/users/')
+			.then(response => response.json())
+			.then( res => {
+				this.setState({
+					items: res.reverse()
+				});
 			});
+		
 	}
 
 	onChangeName(e){
@@ -47,40 +47,78 @@ export default class Users extends Component{
 	onSubmit(e){
 		e.preventDefault();
 		const user = {
-			name: this.state.name
+			name: this.state.name			
 		};	
-
+		//const test = JSON.stringify(user);
 		console.log(user);
 
 		axios.post('http://localhost:5000/users/add', user)
-			.then(res => console.log(res.data));
-
+		
 		this.setState({
 			name: ''
 		});
-
-	}
-
-	printAllUsers(){
-		/*
+		console.log(this.state.items);
+		var dataContainer = document.getElementById("leaderboard");	
+		//var btn = document.getElementById("btn");
 		var txt = "";
-		for (var i = this.state.allUsers.length - 1; i >= 0; i--) {
-			txt += this.state.allUsers[i].name;
+		//console.log("b hi");
+		fetch('http://localhost:5000/users/')
+			.then(response => response.json())
+			.then( res => {
+				console.log("submit response is ");
+				console.log(res);
+				this.setState({
+					items: res.reverse()
+				});
+			});
+		
+		for (var i = 0; i < this.state.items.length; i++) {
+			txt += "<p>" + this.state.items[i].name + "</p><br />";
 		}
-
-		return txt;
-		*/
-		return this.state.allUsers.map(currentUser => {
-			return <UsersList user = {currentUser} />;
-		});
+		//dataContainer.insertAdjacentHTML('beforeend', txt);
+		dataContainer.innerHTML = txt;
+		if(this.state.counter >= 1){
+			//btn.innerHTML = "Reload";
+		}
+		this.state.counter++;
 	}
-
+	showData(){
+		var dataContainer = document.getElementById("leaderboard");	
+		var btn = document.getElementById("btn");
+		var txt = "";
+		console.log("b hi");
+		fetch('http://localhost:5000/users/')
+			.then(response => response.json())
+			.then( res => {
+				console.log("click response is ");
+				console.log(res);
+				this.setState({
+					items: res.reverse()
+				});
+			});
+		txt = "";
+		
+		for (var i = 0; i < this.state.items.length; i++) {
+			txt += "<p>" + this.state.items[i].name + "</p><br />";
+		}
+		//dataContainer.insertAdjacentHTML('beforeend', txt);
+		dataContainer.innerHTML = txt;
+		if(this.state.counter >= 1){
+			btn.innerHTML = "Reload";
+		}
+		this.state.counter++;
+	}
 
 
 	render(){
+		const items = this.state.items;
+
 		return(
 			<center>
 				<div>
+					<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+					<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 					<form onSubmit = {this.onSubmit}>
 						<input type="text" name="name" value={this.state.name} onChange = {this.onChangeName} />
 						<input type="submit" />
@@ -88,8 +126,10 @@ export default class Users extends Component{
 					</form>
 					<br />
 					<br />
-					<b>Leaderboard</b>
-					{this.printAllUsers() }
+					<b>Leaderboard</b>	
+					<button id="btn" className="btn btn-primary" onClick= {this.showData}> SHOW DATA</button>				
+					<div id="leaderboard"></div>
+
 				</div>
 			</center>
 		)
