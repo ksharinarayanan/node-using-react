@@ -88,6 +88,7 @@ export default class Users extends Component{
 					</form>
 					<br />
 					<br />
+					<b>Leaderboard</b>
 					{this.printAllUsers() }
 				</div>
 			</center>
