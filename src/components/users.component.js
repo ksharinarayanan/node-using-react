@@ -41,8 +41,6 @@ export default class Users extends Component{
 		const user = {
 			name: this.state.name			
 		};	
-		//const test = JSON.stringify(user);
-		//console.log(user);
 
 		axios.post('http://localhost:5000/users/add', user)
 		
@@ -75,7 +73,6 @@ export default class Users extends Component{
 		for (var i = 0; i < this.state.items.length; i++) {
 			txt += "<p>" + this.state.items[i].name + "</p><br />";
 		}
-		//dataContainer.insertAdjacentHTML('beforeend', txt);
 		dataContainer.innerHTML = txt;
 		if(this.state.counter >= 1){
 			btn.innerHTML = "Reload";
@@ -110,9 +107,10 @@ export default class Users extends Component{
 					</form>
 					<br />
 					<br />
-					<b>Leaderboard</b>
-					<br />	
-					<button id="btn" className="btn btn-primary" onClick= {this.showData}> SHOW DATA</button>				
+					<b>Users</b>
+					<br />	<br />
+					<button id="btn" className="btn btn-primary" onClick= {this.showData}> SHOW DATA</button>	
+					<br />			
 					<div id="leaderboard"></div>
 
 				</div>
