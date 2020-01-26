@@ -1,14 +1,5 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import $ from "min-jquery";
-//import {Link} from 'react-router-dom';
-
-const UsersList = props => (
-	<div>
-	{props.user.name}
-	<br /> 
-	</div>
-);
 
 export default class Users extends Component{
 
@@ -18,6 +9,7 @@ export default class Users extends Component{
 		this.onChangeName = this.onChangeName.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
 		this.showData = this.showData.bind(this);
+		this.fetchData = this.fetchData.bind(this);
 
 		this.state = {
 			name: '',
@@ -50,48 +42,30 @@ export default class Users extends Component{
 			name: this.state.name			
 		};	
 		//const test = JSON.stringify(user);
-		console.log(user);
+		//console.log(user);
 
 		axios.post('http://localhost:5000/users/add', user)
 		
 		this.setState({
 			name: ''
 		});
-		console.log(this.state.items);
-		var dataContainer = document.getElementById("leaderboard");	
-		//var btn = document.getElementById("btn");
-		var txt = "";
-		//console.log("b hi");
+
 		fetch('http://localhost:5000/users/')
 			.then(response => response.json())
 			.then( res => {
-				console.log("submit response is ");
-				console.log(res);
 				this.setState({
 					items: res.reverse()
 				});
 			});
-		
-		for (var i = 0; i < this.state.items.length; i++) {
-			txt += "<p>" + this.state.items[i].name + "</p><br />";
-		}
-		//dataContainer.insertAdjacentHTML('beforeend', txt);
-		dataContainer.innerHTML = txt;
-		if(this.state.counter >= 1){
-			//btn.innerHTML = "Reload";
-		}
-		this.state.counter++;
+
 	}
 	showData(){
 		var dataContainer = document.getElementById("leaderboard");	
 		var btn = document.getElementById("btn");
 		var txt = "";
-		console.log("b hi");
 		fetch('http://localhost:5000/users/')
 			.then(response => response.json())
 			.then( res => {
-				console.log("click response is ");
-				console.log(res);
 				this.setState({
 					items: res.reverse()
 				});
@@ -109,13 +83,23 @@ export default class Users extends Component{
 		this.state.counter++;
 	}
 
+	fetchData(){
+		fetch('http://localhost:5000/users/')
+			.then(response => response.json())
+			.then( res => {
+				this.setState({
+					items: res.reverse()
+				});
+			});
+	}
+
 
 	render(){
 		const items = this.state.items;
 
 		return(
 			<center>
-				<div>
+				<div onMouseOver = {this.fetchData}>
 					<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
 					<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -126,7 +110,8 @@ export default class Users extends Component{
 					</form>
 					<br />
 					<br />
-					<b>Leaderboard</b>	
+					<b>Leaderboard</b>
+					<br />	
 					<button id="btn" className="btn btn-primary" onClick= {this.showData}> SHOW DATA</button>				
 					<div id="leaderboard"></div>
 
